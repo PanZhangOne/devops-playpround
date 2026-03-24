@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addTask, getTask } from "./db.js";
+import { addTask, getTask, setComplete } from "./db.js";
 
 const router: ReturnType<typeof Router> = Router();
 
@@ -16,5 +16,10 @@ router.post("/tasks", async (req, res) => {
   res.status(201).json({ message: "Task added successfully" });
 });
 
+router.post("/tasks/:id/complete", async (req, res) => {
+  const { id } = req.params;
+  await setComplete(id, true);
+  res.json({ message: "Task marked as completed" });
+});
 
 export default router;

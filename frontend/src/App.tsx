@@ -18,7 +18,7 @@ function App() {
   };
 
   const addTask = async () => {
-    const title = prompt("请输入任务标题")
+    const title = prompt("请输入任务标题");
     if (!title) return;
     await fetch("/api/tasks", {
       method: "POST",
@@ -26,6 +26,17 @@ function App() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ title }),
+    });
+    fetchTasks();
+  };
+
+  const toggleComplete = async (id: string, completed: boolean) => {
+    await fetch(`/api/tasks/${id}/complete`, {
+      method: "POST",
+      body: JSON.stringify({ completed: !completed }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
     fetchTasks();
   };
@@ -56,6 +67,9 @@ function App() {
         {tasks.map((task) => (
           <li key={task.id}>
             {task.title} - {task.completed ? "Completed" : "Pending"}
+            <button onClick={() => toggleComplete(task.id, task.completed)}>
+              {task.completed ? "Mark as Incomplete" : "Mark as Complete"}
+            </button>
           </li>
         ))}
       </ul>

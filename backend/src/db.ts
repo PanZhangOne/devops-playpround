@@ -33,6 +33,10 @@ export async function getTask() {
   return res.rows as Task[];
 }
 
+export async function setComplete(id: string, completed: boolean) {
+  await pool.query("UPDATE tasks SET completed = $1 WHERE id = $2", [completed, id]);
+}
+
 // 创建任务 传递 title 参数，自动生成 id 和 created_at，completed 默认为 false
 export async function addTask(title: string) {
   await pool.query("insert into tasks (title) values ($1)", [title]);
