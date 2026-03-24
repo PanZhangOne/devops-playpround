@@ -37,7 +37,9 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/panzhangone/devops-playground-backend:latest
+          tags: |
+            ghcr.io/panzhangone/devops-playground-backend:latest
+            ghcr.io/panzhangone/devops-playground-backend:${{ github.sha }}
 
 
       - name: Build and push frontend image
@@ -47,8 +49,9 @@ jobs:
           file: ./frontend/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/panzhangone/devops-playground-frontend:latest
-
+          tags: |
+            ghcr.io/panzhangone/devops-playground-frontend:latest
+            ghcr.io/panzhangone/devops-playground-frontend:${{ github.sha }}
 
   deploy:
     runs-on: self-hosted
@@ -58,5 +61,12 @@ jobs:
       - name: Deploy on self-hosted runner
         run: |
           cd /opt/devops-playground
-          docker compose --env-file infra/.env.prod -f infra/docker-compose.prod.yml pull
-          docker compose --env-file infra/.env.prod -f infra/docker-compose.prod.yml up -d
+          echo "IMAGE_TAG=${{ github.sha }}" > infra/.deploy.env
+          docker compose \
+            --env-file infra/.env.prod \
+            --env-file infra/.deploy.env \
+            -f infra/docker-compose.prod.yml pull
+          docker compose \
+            --env-file infra/.env.prod \
+            --env-file infra/.deploy.env \
+            -f infra/docker-compose.prod.yml up -d
