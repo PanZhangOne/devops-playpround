@@ -28,13 +28,20 @@ export const checkTable = async () => {
   `);
 };
 
+export async function getCout() {
+  const res = await pool.query("select count(*) from tasks");
+}
+
 export async function getTask() {
   const res = await pool.query("select * from tasks");
   return res.rows as Task[];
 }
 
 export async function setComplete(id: string, completed: boolean) {
-  await pool.query("UPDATE tasks SET completed = $1 WHERE id = $2", [completed, id]);
+  await pool.query("UPDATE tasks SET completed = $1 WHERE id = $2", [
+    completed,
+    id,
+  ]);
 }
 
 // 创建任务 传递 title 参数，自动生成 id 和 created_at，completed 默认为 false
