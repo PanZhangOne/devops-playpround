@@ -12,17 +12,23 @@ try {
 
 const app = express();
 app.use(express.json());
-app.use("/api", taskRouter);
 
-app.use("/api/health", async (req, res) => {
+app.get("/api/health", async (req, res) => {
   try {
     await getCout();
-    res.json({ status: "ok", message: "Database connection successful" });
+    res
+      .status(200)
+      .json({ status: "ok", message: "Database connection successful" });
   } catch (error) {
-    res.json({ status: "error", message: "Database connection failed" });
+    res
+      .status(503)
+      .json({ status: "error", message: "Database connection failed" });
   }
 });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server is running on port ${process.env.PORT}`);
+app.use("/api", taskRouter);
+
+const port = Number(process.env.PORT) || 8080;
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 });
