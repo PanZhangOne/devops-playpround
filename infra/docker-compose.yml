@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: devops-playground-postgres
+    environment:
+      POSTGRES_USER: app_user
+      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: devops_playground
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "app_user", "-d", "devops_playground"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build: ../backend
+    container_name: devops-playground-backend
+    environment:
+      DATABASE_URL: postgres://app_user:app_password@postgres:5432/devops_playground
+      PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy # 这样可以确保在 postgres 服务健康之前，backend 不会启动
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/health || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  frontend:
+    build:
+      context: ..
+      dockerfile: frontend/Dockerfile
+    container_name: devops-playground-frontend
+    depends_on:
+      backend:
+        condition: service_healthy # 这样可以确保在 backend 服务健康之前，frontend 不会启动
+    ports:
+      - "80:80"
+
+volumes:
+  postgres_data:

@@ -1,0 +1,6 @@
+jobs:
+  docker-build:
+    steps:
+      - checks-out
+      - build backend
+      - build frontend
