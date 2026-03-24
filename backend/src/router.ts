@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addTask, getTask, setComplete } from "./db.js";
+import { addTask, deleteTask, getTask, setComplete } from "./db.js";
 
 const router: ReturnType<typeof Router> = Router();
 
@@ -20,6 +20,12 @@ router.post("/tasks/:id/complete", async (req, res) => {
   const { id } = req.params;
   await setComplete(id, true);
   res.json({ message: "Task marked as completed" });
+});
+
+router.post("/tasks/:id/delete", async (req, res) => {
+  const { id } = req.params;
+  await deleteTask(id);
+  res.json({ message: "Task deleted successfully" });
 });
 
 export default router;

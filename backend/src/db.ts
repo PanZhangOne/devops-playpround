@@ -44,6 +44,10 @@ export async function setComplete(id: string, completed: boolean) {
   ]);
 }
 
+export async function deleteTask(id: string) {
+  await pool.query("DELETE FROM tasks WHERE id = $1", [id]);
+}
+
 // 创建任务 传递 title 参数，自动生成 id 和 created_at，completed 默认为 false
 export async function addTask(title: string) {
   await pool.query("insert into tasks (title) values ($1)", [title]);

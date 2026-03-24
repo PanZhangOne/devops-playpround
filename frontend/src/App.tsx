@@ -41,6 +41,13 @@ function App() {
     fetchTasks();
   };
 
+  const deleteTask = async (id: string) => {
+    await fetch(`/api/tasks/${id}/delete`, {
+      method: "POST",
+    });
+    fetchTasks();
+  }
+
   useEffect(() => {
     let isMounted = true;
 
@@ -71,6 +78,7 @@ function App() {
             <button onClick={() => toggleComplete(task.id, task.completed)}>
               {task.completed ? "Mark as Incomplete" : "Mark as Complete"}
             </button>
+            <button onClick={() => deleteTask(task.id)}>Delete</button>
           </li>
         ))}
       </ul>
