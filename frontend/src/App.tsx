@@ -17,7 +17,9 @@ function App() {
     setTasks(data.data);
   };
 
-  const addTask = async (title: string) => {
+  const addTask = async () => {
+    const title = prompt("请输入任务标题")
+    if (!title) return;
     await fetch("/api/tasks", {
       method: "POST",
       headers: {
@@ -48,7 +50,7 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Task List</h1>
+      <h1>Task List.</h1>
       <button onClick={fetchTasks}>Fetch Tasks</button>
       <ul>
         {tasks.map((task) => (
@@ -57,7 +59,7 @@ function App() {
           </li>
         ))}
       </ul>
-      <button onClick={() => addTask("New Task")}>Add Task</button>
+      <button onClick={() => addTask()}>Add Task</button>
     </div>
   );
 }
