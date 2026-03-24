@@ -1,4 +1,4 @@
-name: CI
+name: CI-CD
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   packages: write
 
 jobs:
-  docker-build:
+  docker-build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,3 +48,15 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ghcr.io/panzhangone/devops-playground-frontend:latest
+
+
+  deploy:
+    runs-on: self-hosted
+    needs: docker-build-and-push
+
+    steps:
+      - name: Deploy on self-hosted runner
+        run: |
+          cd /opt/devops-playground
+          docker compose --env-file infra/.env.prod -f infra/docker-compose.prod.yml pull
+          docker compose --env-file infra/.env.prod -f infra/docker-compose.prod.yml up -d
