@@ -1,9 +1,10 @@
-name: CI-CD
+name: Deploy Production
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -11,12 +12,13 @@ permissions:
 
 jobs:
   docker-build-and-push:
+    name: Build And Push Images
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout source code
         uses: actions/checkout@v4
-        
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -41,7 +43,6 @@ jobs:
             ghcr.io/panzhangone/devops-playground-backend:latest
             ghcr.io/panzhangone/devops-playground-backend:${{ github.sha }}
 
-
       - name: Build and push frontend image
         uses: docker/build-push-action@v6
         with:
@@ -54,8 +55,10 @@ jobs:
             ghcr.io/panzhangone/devops-playground-frontend:${{ github.sha }}
 
   deploy:
+    name: Deploy On Self Hosted Runner
     runs-on: self-hosted
     needs: docker-build-and-push
+    environment: production
 
     steps:
       - name: Deploy on self-hosted runner

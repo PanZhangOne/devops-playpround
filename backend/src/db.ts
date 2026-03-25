@@ -29,7 +29,8 @@ export const checkTable = async () => {
 };
 
 export async function getCout() {
-  const res = await pool.query("select count(*) from tasks");
+  const result = await pool.query("select count(*) from tasks");
+  return Number(result.rows[0]?.count ?? 0);
 }
 
 export async function getTask() {
