@@ -1,0 +1,12 @@
+1. Get the application URL by running these commands:
+  {{- if .Values.ingress.enabled }}
+  kubectl get ingress {{ include "devops-playground.frontendServiceName" . }} -n {{ .Release.Namespace }}
+  {{- else }}
+  kubectl port-forward svc/{{ include "devops-playground.frontendServiceName" . }} 8080:{{ .Values.frontend.service.port }} -n {{ .Release.Namespace }}
+  {{- end }}
+
+2. If you are using minikube on macOS with the docker driver, prefer:
+  minikube service ingress-nginx-controller -n ingress-nginx --url
+
+3. If you only want local access, this is usually simpler:
+  kubectl port-forward svc/{{ include "devops-playground.frontendServiceName" . }} 8080:{{ .Values.frontend.service.port }} -n {{ .Release.Namespace }}

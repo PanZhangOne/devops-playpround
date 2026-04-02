@@ -1,0 +1,17 @@
+{{- if .Values.postgres.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "devops-playground.postgresServiceName" . }}
+  labels:
+    {{- include "devops-playground.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "devops-playground.postgresLabels" . | nindent 4 }}
+  ports:
+    - port: 5432
+      targetPort: postgres
+      protocol: TCP
+      name: postgres
+{{- end }}
